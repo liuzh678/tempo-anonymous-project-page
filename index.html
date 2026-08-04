@@ -4,47 +4,254 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TEMPO: Semantic-Action Decoupled RL Post-Training for Vision-Language-Action Models</title>
-  <meta name="description" content="TEMPO is a semantic-action decoupled reinforcement learning framework for post-training vision-language-action models with separate semantic and action update frequencies.">
+  <meta name="description" content="TEMPO decouples semantic-side and action-side adaptation for reinforcement learning post-training of vision-language-action models.">
   <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta name="theme-color" content="#f7f8f5">
-  <link rel="icon" href="data:,">
-  <link rel="canonical" href="">
-
+  <meta name="theme-color" content="#ffffff">
   <meta property="og:title" content="TEMPO: Semantic-Action Decoupled RL Post-Training for Vision-Language-Action Models">
-  <meta property="og:description" content="TEMPO is a semantic-action decoupled reinforcement learning framework for post-training vision-language-action models with separate semantic and action update frequencies.">
+  <meta property="og:description" content="A two-timescale reinforcement learning framework for pretrained vision-language-action policies.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="">
   <meta property="og:image" content="assets/overview.png">
-
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="TEMPO: Semantic-Action Decoupled RL Post-Training for Vision-Language-Action Models">
-  <meta name="twitter:description" content="TEMPO is a semantic-action decoupled reinforcement learning framework for post-training vision-language-action models with separate semantic and action update frequencies.">
-
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:,">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="site-header">
-    <div class="shell topbar">
-      <a class="brand" href="#top" aria-label="Back to top" id="brand-link">
-        <span class="brand-mark" aria-hidden="true" hidden></span>
-        <span id="brand-title">Paper page</span>
-      </a>
-      <div class="topbar-end">
-        <nav class="nav-scroll" aria-label="Primary" id="nav-links"></nav>
-        <div class="lang-switch" aria-label="Language switch" id="lang-switch" hidden></div>
+  <nav class="site-nav" aria-label="Primary navigation">
+    <div class="page-shell nav-inner">
+      <a class="wordmark" href="#top">TEMPO</a>
+      <div class="nav-links">
+        <a href="#abstract">Abstract</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#real-world">Real World</a>
+        <a href="#citation">Citation</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="paper-hero" id="top">
+    <div class="page-shell hero-inner">
+      <p class="venue-label">Anonymous Project Page</p>
+      <h1><span>TEMPO:</span> Semantic-Action Decoupled RL Post-Training for Vision-Language-Action Models</h1>
+      <p class="hero-subtitle">
+        A two-timescale reinforcement learning framework that adapts the semantic projection layer and action expert at different update frequencies.
+      </p>
+      <p class="author-line">Anonymous Authors</p>
+      <div class="hero-actions" aria-label="Paper resources">
+        <a class="resource-button primary" href="paper.pdf" target="_blank" rel="noopener">
+          <span class="resource-icon" aria-hidden="true">PDF</span>
+          <span>Paper</span>
+        </a>
+        <a class="resource-button" href="https://anonymous.4open.science/r/tempo-page/" target="_blank" rel="noopener noreferrer">
+          <span class="resource-icon code-icon" aria-hidden="true">&lt;/&gt;</span>
+          <span>Code</span>
+        </a>
       </div>
     </div>
   </header>
 
-  <main id="top">
-    <section class="hero" id="hero-root"></section>
-    <section class="section" id="summary-root"></section>
-    <div id="sections-root"></div>
-    <section class="section band-soft" id="citation"></section>
+  <main>
+    <section class="overview-section" aria-label="Method overview">
+      <div class="page-shell page-shell-wide">
+        <figure class="overview-figure">
+          <a href="assets/overview.png" target="_blank" rel="noopener">
+            <img src="assets/overview.png" alt="TEMPO overview with a frozen vision-language model, a slowly updated semantic projection layer, and a rapidly updated action expert.">
+          </a>
+          <figcaption>
+            TEMPO retains the pretrained vision-language model and decouples reinforcement learning updates for semantic projection and action generation.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="content-section section-tint" id="abstract">
+      <div class="page-shell prose-shell">
+        <div class="section-heading centered">
+          <p class="section-label">Abstract</p>
+          <h2>Different modules, different adaptation needs</h2>
+        </div>
+        <div class="abstract-copy">
+          <p>
+            Vision-language-action (VLA) models are commonly adapted to downstream manipulation tasks through supervised fine-tuning or online reinforcement learning post-training. Supervised training is prone to distribution mismatch, while existing reinforcement learning approaches typically apply a single update strategy to all trainable components despite their different functional roles.
+          </p>
+          <p>
+            TEMPO is a semantic-action decoupled, two-timescale reinforcement learning framework for pretrained VLA models. It keeps the pretrained vision-language backbone unchanged and adapts two components through dedicated optimization loops: the semantic projection layer and the low-level action expert. The projection layer is updated conservatively to maintain a stable action-conditioning representation, while the action expert is updated more frequently to incorporate control feedback from online interaction.
+          </p>
+          <p>
+            Experiments on the CALVIN benchmark and two real-world manipulation tasks evaluate long-horizon completion, component contributions, update-frequency choices, and online learning behavior.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="method">
+      <div class="page-shell page-shell-wide">
+        <div class="section-heading">
+          <p class="section-label">Method</p>
+          <h2>Semantic-action decoupled reinforcement learning</h2>
+          <p>
+            A shared stream of robot interaction supplies task rewards to two representation-specific TD3 loops. The semantic loop operates between the frozen vision-language representation and the action-conditioning representation, while the action loop maps that representation to executable action chunks.
+          </p>
+        </div>
+
+        <figure class="paper-figure framework-figure">
+          <a href="assets/framework_overview.png" target="_blank" rel="noopener">
+            <img src="assets/framework_overview.png" alt="TEMPO system framework with a frozen VLM, semantic projection loop, action-expert loop, replay buffers, critics, and environment interaction.">
+          </a>
+          <figcaption>
+            System framework. Separate replay buffers and critic pairs support slower semantic projection updates and faster action-expert updates under the same environment reward.
+          </figcaption>
+        </figure>
+
+        <div class="method-points">
+          <article>
+            <span>01</span>
+            <h3>Preserved backbone</h3>
+            <p>The pretrained vision-language model remains unchanged during reinforcement learning.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Semantic adaptation</h3>
+            <p>A dedicated loop updates the semantic projection layer in the representation space.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Action adaptation</h3>
+            <p>A separate loop updates Action-LoRA parameters using executable action chunks and interaction feedback.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section section-tint" id="results">
+      <div class="page-shell">
+        <div class="section-heading centered">
+          <p class="section-label">Simulation Results</p>
+          <h2>Long-horizon manipulation on CALVIN ABC-to-D</h2>
+          <p>
+            We report the success rate after each instruction in a five-task chain and the average number of consecutively completed instructions.
+          </p>
+        </div>
+
+        <div class="table-wrap" role="region" aria-label="CALVIN benchmark results" tabindex="0">
+          <table>
+            <caption>CALVIN ABC-to-D results</caption>
+            <thead>
+              <tr>
+                <th scope="col">Method</th>
+                <th scope="col">SR1</th>
+                <th scope="col">SR2</th>
+                <th scope="col">SR3</th>
+                <th scope="col">SR4</th>
+                <th scope="col">SR5</th>
+                <th scope="col">Avg. Len.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">DeFI</th>
+                <td>97.9</td><td>94.2</td><td>90.7</td><td>87.0</td><td>81.2</td><td>4.51</td>
+              </tr>
+              <tr>
+                <th scope="row">FLOWER</th>
+                <td>99.4</td><td>95.8</td><td>90.7</td><td>84.9</td><td>77.8</td><td>4.49</td>
+              </tr>
+              <tr>
+                <th scope="row">FLOWER-RL</th>
+                <td>99.4</td><td>96.7</td><td>91.3</td><td>85.5</td><td>78.4</td><td>4.51</td>
+              </tr>
+              <tr class="ours-row">
+                <th scope="row">TEMPO (Ours)</th>
+                <td>100.0</td><td>97.1</td><td>92.9</td><td>87.1</td><td>81.7</td><td>4.59</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="result-notes">
+          <p>
+            The comparison includes the pretrained FLOWER policy, a single-loop reinforcement learning variant, and recent long-horizon baselines. TEMPO records the strongest SR5 and average chain length in the reported comparison.
+          </p>
+          <p>
+            Component and frequency studies in the paper examine semantic-only, action-only, equal-frequency, and frequency-decoupled variants under the same evaluation protocol.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="real-world">
+      <div class="page-shell page-shell-wide">
+        <div class="section-heading">
+          <p class="section-label">Real-World Experiments</p>
+          <h2>Online adaptation for prerequisite-dependent manipulation</h2>
+          <p>
+            Two physical tasks require the policy to handle a drawer before interacting with the target object. Curves show evaluation reward during online training, and frame sequences compare the learned execution order with FLOWER-RL.
+          </p>
+        </div>
+
+        <article class="experiment-row">
+          <figure class="paper-figure curve-figure">
+            <img src="assets/online_reinforcement.png" alt="Evaluation reward during online training for the block-sliding task.">
+            <figcaption>Online evaluation reward for the block-sliding task.</figcaption>
+          </figure>
+          <figure class="paper-figure sequence-figure">
+            <a href="assets/realworld_comparison.png" target="_blank" rel="noopener">
+              <img src="assets/realworld_comparison.png" alt="FLOWER-RL and TEMPO execution sequences for sliding a block into a drawer.">
+            </a>
+            <figcaption>Block sliding: the successful sequence opens the drawer before moving the block.</figcaption>
+          </figure>
+        </article>
+
+        <article class="experiment-row">
+          <figure class="paper-figure curve-figure">
+            <img src="assets/online_reinforcement_task2.png" alt="Evaluation reward during online training for the car-retrieval task.">
+            <figcaption>Online evaluation reward for the car-retrieval task.</figcaption>
+          </figure>
+          <figure class="paper-figure sequence-figure">
+            <a href="assets/realworld_task2_comparison.png" target="_blank" rel="noopener">
+              <img src="assets/realworld_task2_comparison.png" alt="FLOWER-RL and TEMPO execution sequences for retrieving a car from a drawer.">
+            </a>
+            <figcaption>Car retrieval: the successful sequence opens the drawer before retrieving the target.</figcaption>
+          </figure>
+        </article>
+      </div>
+    </section>
+
+    <section class="content-section citation-section" id="citation">
+      <div class="page-shell prose-shell">
+        <div class="section-heading centered">
+          <p class="section-label">Citation</p>
+          <h2>Paper resources</h2>
+          <p>The manuscript and anonymous code repository are available through the links below.</p>
+        </div>
+        <div class="citation-actions">
+          <a class="resource-button primary" href="paper.pdf" target="_blank" rel="noopener">
+            <span class="resource-icon" aria-hidden="true">PDF</span>
+            <span>Paper</span>
+          </a>
+          <a class="resource-button" href="https://anonymous.4open.science/r/tempo-page/" target="_blank" rel="noopener noreferrer">
+            <span class="resource-icon code-icon" aria-hidden="true">&lt;/&gt;</span>
+            <span>Code</span>
+          </a>
+        </div>
+        <div class="bibtex-block">
+          <button class="copy-button" type="button" data-copy="bibtex">Copy BibTeX</button>
+          <pre id="bibtex">@article{anonymous2026tempo,
+  title   = {TEMPO: Semantic-Action Decoupled RL Post-Training for Vision-Language-Action Models},
+  author  = {Anonymous},
+  journal = {Manuscript under review},
+  year    = {2026}
+}</pre>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <footer class="site-footer" id="site-footer" hidden>
-    <div class="shell footer-row" id="footer-root"></div>
+  <footer class="site-footer">
+    <div class="page-shell footer-inner">
+      <span>TEMPO</span>
+      <span>Anonymous project page</span>
+    </div>
   </footer>
 
   <script src="script.js"></script>
