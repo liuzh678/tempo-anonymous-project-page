@@ -13,7 +13,7 @@
   --green: #3f8b4d;
   --green-deep: #2d6b3a;
   --green-soft: #e9f5eb;
-  --amber: #a86916;
+  --amber: #945a12;
   --amber-soft: #fff7e7;
   --dark: #13271f;
   --shell: 1120px;
@@ -870,7 +870,7 @@ tbody tr.ours-row:nth-child(even) {
 }
 
 .mobile-scroll-hint {
-  color: #718178;
+  color: #65766d;
   font-weight: 600;
 }
 
