@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TEMPO: Semantic-Action Decoupled RL Post-Training for Vision-Language-Action Models</title>
-  <meta name="description" content="TEMPO decouples semantic-side and action-side adaptation for reinforcement learning post-training of vision-language-action models.">
+  <meta name="description" content="TEMPO is a semantic-action decoupled, two-timescale RL post-training framework for vision-language-action models.">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="theme-color" content="#ffffff">
   <meta property="og:title" content="TEMPO: Semantic-Action Decoupled RL Post-Training for Vision-Language-Action Models">
-  <meta property="og:description" content="A two-timescale reinforcement learning framework for pretrained vision-language-action policies.">
+  <meta property="og:description" content="TEMPO freezes the pretrained vision-language backbone and adapts the semantic projection layer and action expert through dedicated RL optimization loops with module-specific update frequencies.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/overview.png">
   <meta name="twitter:card" content="summary_large_image">
@@ -24,7 +24,9 @@
         <a href="#abstract">Abstract</a>
         <a href="#method">Method</a>
         <a href="#results">Results</a>
+        <a href="#ablations">Ablations</a>
         <a href="#real-world">Real World</a>
+        <a href="#conclusion">Conclusion</a>
         <a href="#citation">Citation</a>
       </div>
     </div>
@@ -35,7 +37,7 @@
       <p class="venue-label">Anonymous Project Page</p>
       <h1><span>TEMPO:</span> Semantic-Action Decoupled RL Post-Training for Vision-Language-Action Models</h1>
       <p class="hero-subtitle">
-        A two-timescale reinforcement learning framework that adapts the semantic projection layer and action expert at different update frequencies.
+        A semantic-action decoupled, two-timescale RL post-training framework that adapts the semantic projection layer and low-level action expert through dedicated RL optimization loops with module-specific update frequencies.
       </p>
       <p class="author-line">Anonymous Authors</p>
       <div class="hero-actions" aria-label="Paper resources">
@@ -54,12 +56,13 @@
   <main>
     <section class="overview-section" aria-label="Method overview">
       <div class="page-shell page-shell-wide">
-        <figure class="overview-figure">
+        <figure class="overview-figure scrollable-figure">
           <a href="assets/overview.png" target="_blank" rel="noopener">
-            <img src="assets/overview.png" alt="TEMPO overview with a frozen vision-language model, a slowly updated semantic projection layer, and a rapidly updated action expert.">
+            <img src="assets/overview.png" width="2830" height="950" fetchpriority="high" decoding="async" alt="TEMPO overview with a frozen vision-language model, a less frequently updated semantic projection layer, and a more frequently updated action expert.">
           </a>
+          <span class="mobile-scroll-hint" aria-hidden="true">Swipe to view the full figure →</span>
           <figcaption>
-            TEMPO retains the pretrained vision-language model and decouples reinforcement learning updates for semantic projection and action generation.
+            Method overview. TEMPO keeps the VLM frozen and decouples the reinforcement learning update frequencies of the semantic projection layer and action expert, updating the former less frequently and the latter more frequently.
           </figcaption>
         </figure>
       </div>
@@ -89,14 +92,29 @@
         </div>
         <div class="abstract-copy">
           <p>
-            Vision-language-action (VLA) models are commonly adapted to downstream manipulation tasks through supervised fine-tuning or online reinforcement learning post-training. Supervised training is prone to distribution mismatch, while existing reinforcement learning approaches typically apply a single update strategy to all trainable components despite their different functional roles.
+            Vision-language-action (VLA) models are commonly adapted to downstream manipulation tasks via supervised fine-tuning (SFT) or online reinforcement learning (RL) post-training. SFT is prone to distribution mismatch, and existing RL approaches typically apply a single, uniform update strategy to all model components, ignoring their distinct functional roles.
           </p>
           <p>
-            TEMPO is a semantic-action decoupled, two-timescale reinforcement learning framework for pretrained VLA models. It keeps the pretrained vision-language backbone unchanged and adapts two components through dedicated optimization loops: the semantic projection layer and the low-level action expert. The projection layer is updated conservatively to maintain a stable action-conditioning representation, while the action expert is updated more frequently to incorporate control feedback from online interaction.
+            We propose TEMPO, a semantic-action decoupled, two-timescale RL post-training framework for VLA models. TEMPO freezes the pretrained vision-language backbone to preserve general semantic representations, and restricts adaptation to two components with dedicated RL optimization loops: the semantic projection layer and the low-level action expert. We update them at different rates—the semantic projection layer infrequently, to keep the latent action stable, and the action expert frequently, to rapidly incorporate control feedback from online interaction.
           </p>
           <p>
-            Experiments on the CALVIN benchmark and two real-world manipulation tasks evaluate long-horizon completion, component contributions, update-frequency choices, and online learning behavior.
+            This decoupling RL fine-tuning strategy prevents fast policy updates from destabilizing high-level semantic representations while still allowing the action expert to learn efficiently from online feedback. Experiments on the CALVIN benchmark and real-world manipulation tasks demonstrate that TEMPO consistently outperforms both pretrained state-of-the-art VLA models and the RL post-training baseline, while reaching and maintaining higher evaluation rewards on two real-world tasks.
           </p>
+        </div>
+
+        <div class="contribution-block">
+          <h3>Contributions</h3>
+          <ol class="contribution-list">
+            <li>
+              TEMPO optimizes the semantic projection layer and action expert through dedicated RL loops while keeping the pretrained vision-language backbone frozen to preserve its large-scale semantic knowledge.
+            </li>
+            <li>
+              A module-specific update-frequency strategy updates the semantic projection layer less frequently to mitigate latent-action drift and the action expert more frequently to incorporate control feedback efficiently.
+            </li>
+            <li>
+              Evaluation on CALVIN and two real-world manipulation tasks shows improved long-horizon simulation performance and higher rewards in physical experiments.
+            </li>
+          </ol>
         </div>
       </div>
     </section>
@@ -107,34 +125,35 @@
           <p class="section-label">Method</p>
           <h2>Semantic-action decoupled reinforcement learning</h2>
           <p>
-            A shared stream of robot interaction supplies task rewards to two representation-specific TD3 loops. The semantic loop operates between the frozen vision-language representation and the action-conditioning representation, while the action loop maps that representation to executable action chunks.
+            The frozen VLM encodes the instruction and observation into the multimodal semantic representation <span class="math">h<sub>t</sub></span>. The semantic projection layer transforms <span class="math">h<sub>t</sub></span> into the latent action <span class="math">z<sub>t</sub></span>, and the action expert maps <span class="math">z<sub>t</sub></span> to the robot action chunk <span class="math">a<sub>t</sub></span>. TEMPO constructs two separate module-level TD3 loops, each with its own replay buffer, twin critics, target networks, and optimizer. Both loops use shared environment rollouts and the same sparse task reward.
           </p>
         </div>
 
-        <figure class="paper-figure framework-figure">
+        <figure class="paper-figure framework-figure scrollable-figure">
           <a href="assets/framework_overview.png" target="_blank" rel="noopener">
-            <img src="assets/framework_overview.png" alt="TEMPO system framework with a frozen VLM, semantic projection loop, action-expert loop, replay buffers, critics, and environment interaction.">
+            <img src="assets/framework_overview.png" width="6015" height="3103" loading="lazy" decoding="async" alt="TEMPO framework with a frozen VLM, semantic projection loop, action-expert loop, replay buffers, critics, and environment interaction.">
           </a>
+          <span class="mobile-scroll-hint" aria-hidden="true">Swipe to view the full figure →</span>
           <figcaption>
-            System framework. Separate replay buffers and critic pairs support slower semantic projection updates and faster action-expert updates under the same environment reward.
+            Framework of TEMPO. The frozen VLM encodes the instruction and observation into <span class="math">h<sub>t</sub></span>, which is transformed by the semantic projection layer into the latent action <span class="math">z<sub>t</sub></span> and subsequently mapped by the action expert to the robot action chunk <span class="math">a<sub>t</sub></span>. Two separate module-level TD3 loops, each equipped with a dedicated replay buffer and critic, optimize the two modules using shared environment rollouts, with a lower update frequency for the semantic projection layer and a higher one for the action expert.
           </figcaption>
         </figure>
 
         <div class="method-points">
           <article>
             <span>01</span>
-            <h3>Preserved backbone</h3>
-            <p>The pretrained vision-language model remains unchanged during reinforcement learning.</p>
+            <h3>Frozen backbone</h3>
+            <p>The pretrained vision-language backbone remains frozen during RL post-training.</p>
           </article>
           <article>
             <span>02</span>
-            <h3>Semantic adaptation</h3>
-            <p>A dedicated loop updates the semantic projection layer in the representation space.</p>
+            <h3>Semantic-level RL</h3>
+            <p>A dedicated TD3 loop optimizes the semantic projection layer from <span class="math">h<sub>t</sub></span> to the latent action <span class="math">z<sub>t</sub></span>.</p>
           </article>
           <article>
             <span>03</span>
-            <h3>Action adaptation</h3>
-            <p>A separate loop updates Action-LoRA parameters using executable action chunks and interaction feedback.</p>
+            <h3>Action-level RL</h3>
+            <p>A separate TD3 loop optimizes the action expert from <span class="math">z<sub>t</sub></span> to executable robot action chunks.</p>
           </article>
         </div>
       </div>
@@ -144,93 +163,286 @@
       <div class="page-shell">
         <div class="section-heading centered">
           <p class="section-label">Simulation Results</p>
-          <h2>Long-horizon manipulation on CALVIN ABC-to-D</h2>
+          <h2>Long-horizon manipulation on CALVIN ABC→D</h2>
           <p>
-            We report the success rate after each instruction in a five-task chain and the average number of consecutively completed instructions.
+            Following the standard CALVIN protocol, columns 1–5 report success rates (SR) for completing the first <span class="math">k</span> tasks in a five-instruction chain, where <span class="math">k</span> = 1, …, 5. Avg. Len. is the average number of consecutively completed tasks from the beginning of each chain.
           </p>
         </div>
 
-        <div class="table-wrap" role="region" aria-label="CALVIN benchmark results" tabindex="0">
+        <h3 class="table-title">CALVIN ABC→D experimental results.</h3>
+        <div class="table-wrap compact-table" role="region" aria-label="CALVIN benchmark results" tabindex="0">
           <table>
-            <caption>CALVIN ABC-to-D results</caption>
+            <caption class="visually-hidden">CALVIN ABC→D experimental results.</caption>
             <thead>
               <tr>
                 <th scope="col">Method</th>
-                <th scope="col">SR1</th>
-                <th scope="col">SR2</th>
-                <th scope="col">SR3</th>
-                <th scope="col">SR4</th>
-                <th scope="col">SR5</th>
+                <th scope="col">1</th>
+                <th scope="col">2</th>
+                <th scope="col">3</th>
+                <th scope="col">4</th>
+                <th scope="col">5</th>
                 <th scope="col">Avg. Len.</th>
               </tr>
             </thead>
             <tbody>
               <tr>
+                <th scope="row">RT-1</th>
+                <td>53.3</td><td>22.2</td><td>9.4</td><td>3.8</td><td>1.3</td><td>0.90</td>
+              </tr>
+              <tr>
+                <th scope="row">RoboFlamingo</th>
+                <td>82.4</td><td>61.9</td><td>46.6</td><td>33.1</td><td>23.5</td><td>2.47</td>
+              </tr>
+              <tr>
+                <th scope="row">SuSIE</th>
+                <td>87.0</td><td>69.0</td><td>49.0</td><td>38.0</td><td>26.0</td><td>2.69</td>
+              </tr>
+              <tr>
+                <th scope="row">GR-1</th>
+                <td>85.4</td><td>71.2</td><td>59.6</td><td>49.7</td><td>40.1</td><td>3.06</td>
+              </tr>
+              <tr>
+                <th scope="row">3D Diffuser Actor</th>
+                <td>92.2</td><td>78.7</td><td>63.9</td><td>51.2</td><td>41.2</td><td>3.27</td>
+              </tr>
+              <tr>
+                <th scope="row">OpenVLA</th>
+                <td>91.3</td><td>77.8</td><td>62.0</td><td>52.1</td><td>43.5</td><td>3.27</td>
+              </tr>
+              <tr>
+                <th scope="row">CLOVER</th>
+                <td>96.0</td><td>83.5</td><td>70.8</td><td>57.5</td><td>45.4</td><td>3.53</td>
+              </tr>
+              <tr>
+                <th scope="row">RoboDual</th>
+                <td>94.4</td><td>82.7</td><td>72.1</td><td>62.4</td><td>54.4</td><td>3.66</td>
+              </tr>
+              <tr>
+                <th scope="row">π<sub>0</sub></th>
+                <td>93.8</td><td>85.0</td><td>76.7</td><td>68.1</td><td>59.9</td><td>3.84</td>
+              </tr>
+              <tr>
+                <th scope="row">π<sub>0.5</sub></th>
+                <td>92.7</td><td>84.6</td><td>77.3</td><td>69.3</td><td>61.2</td><td>3.85</td>
+              </tr>
+              <tr>
+                <th scope="row">UP-VLA</th>
+                <td>92.8</td><td>86.5</td><td>81.5</td><td>76.9</td><td>69.9</td><td>4.08</td>
+              </tr>
+              <tr>
+                <th scope="row">RoboVLMs</th>
+                <td>98.0</td><td>93.6</td><td>85.4</td><td>77.8</td><td>70.4</td><td>4.25</td>
+              </tr>
+              <tr>
+                <th scope="row">Seer-Large</th>
+                <td>96.3</td><td>91.6</td><td>86.1</td><td>80.3</td><td>74.0</td><td>4.28</td>
+              </tr>
+              <tr>
+                <th scope="row">VPP</th>
+                <td>96.5</td><td>90.9</td><td>86.6</td><td>82.0</td><td>76.9</td><td>4.33</td>
+              </tr>
+              <tr>
+                <th scope="row">UNIVLA</th>
+                <td>98.9</td><td>94.8</td><td>89.0</td><td>82.8</td><td>75.1</td><td>4.41</td>
+              </tr>
+              <tr>
                 <th scope="row">DeFI</th>
                 <td>97.9</td><td>94.2</td><td>90.7</td><td>87.0</td><td>81.2</td><td>4.51</td>
               </tr>
-              <tr>
+              <tr class="reference-row">
                 <th scope="row">FLOWER</th>
                 <td>99.4</td><td>95.8</td><td>90.7</td><td>84.9</td><td>77.8</td><td>4.49</td>
               </tr>
-              <tr>
+              <tr class="reference-row">
                 <th scope="row">FLOWER-RL</th>
                 <td>99.4</td><td>96.7</td><td>91.3</td><td>85.5</td><td>78.4</td><td>4.51</td>
               </tr>
-              <tr class="ours-row">
+              <tr class="ours-row main-ours-row">
                 <th scope="row">TEMPO (Ours)</th>
                 <td>100.0</td><td>97.1</td><td>92.9</td><td>87.1</td><td>81.7</td><td>4.59</td>
               </tr>
             </tbody>
           </table>
         </div>
+        <span class="mobile-scroll-hint" aria-hidden="true">Swipe to view all columns →</span>
 
-        <div class="result-notes">
-          <p>
-            The comparison includes the pretrained FLOWER policy, a single-loop reinforcement learning variant, and recent long-horizon baselines. TEMPO records the strongest SR5 and average chain length in the reported comparison.
-          </p>
-          <p>
-            Component and frequency studies in the paper examine semantic-only, action-only, equal-frequency, and frequency-decoupled variants under the same evaluation protocol.
-          </p>
+        <div class="result-summary">
+          <p>TEMPO achieves the best overall long-horizon performance on CALVIN ABC→D, ranking first in SR5 and Avg. Len. with 81.7% and 4.59, respectively.</p>
         </div>
       </div>
     </section>
 
-    <section class="content-section" id="real-world">
+    <section class="content-section" id="ablations">
+      <div class="page-shell">
+        <div class="section-heading centered">
+          <p class="section-label">Ablation and Analysis</p>
+          <h2>Components, update frequencies, and task-set size</h2>
+          <p>The analyses follow the same CALVIN five-instruction-chain evaluation protocol as the main comparison.</p>
+        </div>
+
+        <div class="ablation-stack">
+          <article class="analysis-card">
+            <h3 class="table-title">Component ablation.</h3>
+            <div class="table-wrap compact-table" role="region" aria-label="Component ablation results" tabindex="0">
+              <table>
+                <caption class="visually-hidden">Component ablation.</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Variant</th>
+                    <th scope="col">1</th><th scope="col">2</th><th scope="col">3</th><th scope="col">4</th><th scope="col">5</th><th scope="col">Avg. Len.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="ours-row">
+                    <th scope="row">Ours (full)</th>
+                    <td><strong>100.0</strong></td><td>97.1</td><td><strong>92.9</strong></td><td><strong>87.1</strong></td><td><strong>81.7</strong></td><td><strong>4.59</strong></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">w/o projection update</th>
+                    <td>99.9</td><td>96.8</td><td>91.6</td><td>86.1</td><td>79.8</td><td>4.54</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">w/o expert update</th>
+                    <td>99.9</td><td><strong>97.2</strong></td><td>92.2</td><td>85.6</td><td>79.6</td><td>4.55</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <span class="mobile-scroll-hint" aria-hidden="true">Swipe to view all columns →</span>
+            <p class="table-note">The w/o projection update variant keeps the semantic projection layer fixed and updates only the action expert, whereas the w/o expert update variant keeps the action expert fixed and updates only the semantic projection layer. Neither variant matches full TEMPO in SR5 or Avg. Len. Full TEMPO achieves the highest SR5 and Avg. Len., indicating that the semantic projection layer and action expert provide complementary adaptation capabilities.</p>
+          </article>
+
+          <article class="analysis-card">
+            <h3 class="table-title">Action-to-semantic update-frequency ratios.</h3>
+            <div class="table-wrap compact-table" role="region" aria-label="Action-to-semantic update-frequency ratios" tabindex="0">
+              <table>
+                <caption class="visually-hidden">Action-to-semantic update-frequency ratios.</caption>
+                <thead>
+                  <tr>
+                    <th scope="col"><span class="math">f<sub>a</sub>:f<sub>s</sub></span></th>
+                    <th scope="col">1</th><th scope="col">2</th><th scope="col">3</th><th scope="col">4</th><th scope="col">5</th><th scope="col">Avg. Len.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1:1</th>
+                    <td>98.6</td><td>94.8</td><td>90.0</td><td>84.5</td><td>77.7</td><td>4.46</td>
+                  </tr>
+                  <tr class="ours-row">
+                    <th scope="row">5:1</th>
+                    <td><strong>100.0</strong></td><td><strong>97.1</strong></td><td><strong>92.9</strong></td><td>87.1</td><td><strong>81.7</strong></td><td><strong>4.59</strong></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">10:1</th>
+                    <td>99.4</td><td>96.6</td><td>92.5</td><td><strong>87.4</strong></td><td>81.2</td><td>4.57</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <span class="mobile-scroll-hint" aria-hidden="true">Swipe to view all columns →</span>
+            <p class="table-note">The 5:1 and 10:1 settings outperform the equal-frequency 1:1 setting. Performance therefore depends not only on applying RL updates, but also on the relative update frequencies assigned to the two modules.</p>
+          </article>
+
+          <article class="analysis-card">
+            <h3 class="table-title">RL post-training task-set size comparison.</h3>
+            <div class="table-wrap compact-table" role="region" aria-label="RL post-training task-set size comparison" tabindex="0">
+              <table>
+                <caption class="visually-hidden">RL post-training task-set size comparison.</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">RL task-set size</th>
+                    <th scope="col">1</th><th scope="col">2</th><th scope="col">3</th><th scope="col">4</th><th scope="col">5</th><th scope="col">Avg. Len.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="ours-row">
+                    <th scope="row">1</th>
+                    <td>99.4</td><td>96.6</td><td><strong>92.5</strong></td><td><strong>87.4</strong></td><td><strong>81.2</strong></td><td><strong>4.57</strong></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>99.6</td><td><strong>97.2</strong></td><td>91.9</td><td>86.0</td><td>79.2</td><td>4.54</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">4</th>
+                    <td><strong>99.9</strong></td><td>96.9</td><td>92.0</td><td>86.8</td><td>80.1</td><td>4.56</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">7</th>
+                    <td>99.7</td><td>97.1</td><td>92.4</td><td>85.5</td><td>79.1</td><td>4.54</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">34</th>
+                    <td>99.6</td><td>96.8</td><td>92.2</td><td>86.3</td><td>79.2</td><td>4.54</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <span class="mobile-scroll-hint" aria-hidden="true">Swipe to view all columns →</span>
+            <p class="table-note">Under the fixed 10:1 update-frequency ratio, the task-set size denotes the number of selected subtasks among CALVIN’s 34 subtasks, rather than the instruction-chain length. Performance does not improve monotonically as the task set expands.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section section-tint" id="real-world">
       <div class="page-shell page-shell-wide">
         <div class="section-heading">
           <p class="section-label">Real-World Experiments</p>
           <h2>Online adaptation for prerequisite-dependent manipulation</h2>
           <p>
-            Two physical tasks require the policy to handle a drawer before interacting with the target object. Curves show evaluation reward during online training, and frame sequences compare the learned execution order with FLOWER-RL.
+            We conduct multi-stage language-conditioned manipulation experiments using a 6-DoF Synria Alicia-D robot arm, a single-DoF gripper, an Intel RealSense D435i third-person camera, and a wrist-mounted D405. Both tasks require the robot to satisfy a prerequisite before interacting with the target object. We collect 60 demonstrations per task, resulting in 120 episodes before online RL post-training.
           </p>
         </div>
 
+        <p class="experiment-protocol">For each random seed, 20 trials are evaluated at every checkpoint and the binary task rewards are summed, assigning 1 to success and 0 to failure. Shaded regions denote one standard deviation across three independent random seeds. Across both tasks, evaluation rewards fluctuate early and then improve and stabilize. TEMPO reaches and maintains higher reward levels than FLOWER-RL during the later stages of post-training.</p>
+
         <article class="experiment-row">
           <figure class="paper-figure curve-figure">
-            <img src="assets/online_reinforcement.png" alt="Evaluation reward during online training for the block-sliding task.">
-            <figcaption>Online evaluation reward for the block-sliding task.</figcaption>
-          </figure>
-          <figure class="paper-figure sequence-figure">
-            <a href="assets/realworld_comparison.png" target="_blank" rel="noopener">
-              <img src="assets/realworld_comparison.png" alt="FLOWER-RL and TEMPO execution sequences for sliding a block into a drawer.">
+            <a href="assets/online_reinforcement.png" target="_blank" rel="noopener">
+              <img src="assets/online_reinforcement.png" width="1224" height="732" loading="lazy" decoding="async" alt="Evaluation reward during online RL post-training for the block-sliding task.">
             </a>
-            <figcaption>Block sliding: the successful sequence opens the drawer before moving the block.</figcaption>
+            <figcaption>Block sliding: evaluation reward during online RL post-training.</figcaption>
+          </figure>
+          <figure class="paper-figure sequence-figure scrollable-figure">
+            <a href="assets/realworld_comparison.png" target="_blank" rel="noopener">
+              <img src="assets/realworld_comparison.png" width="4377" height="1152" loading="lazy" decoding="async" alt="FLOWER-RL and TEMPO execution sequences for sliding a block into a drawer.">
+            </a>
+            <span class="mobile-scroll-hint" aria-hidden="true">Swipe to view the full sequence →</span>
+            <figcaption>Block sliding: FLOWER-RL directly manipulates the block without opening the drawer and fails, whereas TEMPO first opens the drawer and then slides the block inside.</figcaption>
           </figure>
         </article>
 
         <article class="experiment-row">
           <figure class="paper-figure curve-figure">
-            <img src="assets/online_reinforcement_task2.png" alt="Evaluation reward during online training for the car-retrieval task.">
-            <figcaption>Online evaluation reward for the car-retrieval task.</figcaption>
-          </figure>
-          <figure class="paper-figure sequence-figure">
-            <a href="assets/realworld_task2_comparison.png" target="_blank" rel="noopener">
-              <img src="assets/realworld_task2_comparison.png" alt="FLOWER-RL and TEMPO execution sequences for retrieving a car from a drawer.">
+            <a href="assets/online_reinforcement_task2.png" target="_blank" rel="noopener">
+              <img src="assets/online_reinforcement_task2.png" width="882" height="528" loading="lazy" decoding="async" alt="Evaluation reward during online RL post-training for the car-retrieval task.">
             </a>
-            <figcaption>Car retrieval: the successful sequence opens the drawer before retrieving the target.</figcaption>
+            <figcaption>Car retrieval: evaluation reward during online RL post-training.</figcaption>
+          </figure>
+          <figure class="paper-figure sequence-figure scrollable-figure">
+            <a href="assets/realworld_task2_comparison.png" target="_blank" rel="noopener">
+              <img src="assets/realworld_task2_comparison.png" width="4374" height="1138" loading="lazy" decoding="async" alt="FLOWER-RL and TEMPO execution sequences for retrieving a car from a drawer.">
+            </a>
+            <span class="mobile-scroll-hint" aria-hidden="true">Swipe to view the full sequence →</span>
+            <figcaption>Car retrieval: FLOWER-RL fails to complete retrieval and placement, whereas TEMPO sequentially opens the drawer, retrieves the car, and places it on the table.</figcaption>
           </figure>
         </article>
+
+        <p class="real-world-note">When the drawer is already fully open, FLOWER-RL and TEMPO achieve comparable performance. Their performance gap mainly emerges when the limited drawer opening leaves insufficient space for direct target-object manipulation.</p>
+      </div>
+    </section>
+
+    <section class="content-section" id="conclusion">
+      <div class="page-shell prose-shell">
+        <div class="section-heading centered">
+          <p class="section-label">Conclusion</p>
+          <h2>Module-specific adaptation for VLA post-training</h2>
+        </div>
+        <div class="conclusion-copy">
+          <p>TEMPO is a semantic-action decoupled RL post-training framework that optimizes different VLA components through dedicated RL loops. It adapts the semantic projection layer while keeping the pretrained vision-language backbone frozen and optimizes the action expert using online feedback. A module-specific update-frequency strategy updates the semantic projection layer less frequently to mitigate drift in the latent action space and the action expert more frequently to incorporate control feedback efficiently.</p>
+          <p>Evaluated on CALVIN and two real-world manipulation tasks, TEMPO achieves improved long-horizon performance over both state-of-the-art VLA models and the RL post-training baseline in simulation, as well as higher rewards in physical experiments. Future work will explore a language-conditioned dense reward function that provides richer intermediate feedback than the sparse instruction-completion reward.</p>
+        </div>
       </div>
     </section>
 
@@ -253,11 +465,11 @@
         </div>
         <div class="bibtex-block">
           <button class="copy-button" type="button" data-copy="bibtex">Copy BibTeX</button>
-          <pre id="bibtex">@article{anonymous2026tempo,
-  title   = {TEMPO: Semantic-Action Decoupled RL Post-Training for Vision-Language-Action Models},
-  author  = {Anonymous},
-  journal = {Manuscript under review},
-  year    = {2026}
+          <pre id="bibtex">@misc{anonymous2026tempo,
+  title  = {TEMPO: Semantic-Action Decoupled RL Post-Training for Vision-Language-Action Models},
+  author = {Anonymous Authors},
+  year   = {2026},
+  note   = {Manuscript under review}
 }</pre>
         </div>
       </div>
