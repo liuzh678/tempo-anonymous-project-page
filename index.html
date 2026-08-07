@@ -72,8 +72,7 @@
     <section class="content-section video-section" id="video">
       <div class="page-shell">
         <div class="section-heading centered">
-          <p class="section-label">Video</p>
-          <h2>Paper overview and experiments</h2>
+          <h2>Video</h2>
           <p>A three-minute presentation of the motivation, method, and experimental evaluation.</p>
         </div>
         <div class="video-frame">
@@ -88,8 +87,7 @@
     <section class="content-section section-tint" id="abstract">
       <div class="page-shell prose-shell">
         <div class="section-heading centered">
-          <p class="section-label">Abstract</p>
-          <h2>Different modules, different adaptation needs</h2>
+          <h2>Abstract</h2>
         </div>
         <div class="abstract-copy">
           <p>
@@ -123,8 +121,7 @@
     <section class="content-section" id="method">
       <div class="page-shell page-shell-wide">
         <div class="section-heading">
-          <p class="section-label">Method</p>
-          <h2>Semantic-action decoupled reinforcement learning</h2>
+          <h2>Method</h2>
           <p>
             The frozen VLM encodes the instruction and observation into the multimodal semantic representation <span class="math">h<sub>t</sub></span>. The semantic projection layer transforms <span class="math">h<sub>t</sub></span> into the latent action <span class="math">z<sub>t</sub></span>, and the action expert maps <span class="math">z<sub>t</sub></span> to the robot action chunk <span class="math">a<sub>t</sub></span>. TEMPO constructs two separate module-level TD3 loops, each with its own replay buffer, twin critics, target networks, and optimizer. Both loops use shared environment rollouts and the same sparse task reward.
           </p>
@@ -160,8 +157,7 @@
     <section class="content-section section-tint" id="results">
       <div class="page-shell">
         <div class="section-heading centered">
-          <p class="section-label">Simulation Results</p>
-          <h2>Long-horizon manipulation on CALVIN ABC→D</h2>
+          <h2>Results</h2>
           <p>
             Following the standard CALVIN protocol, columns 1–5 report success rates (SR) for completing the first <span class="math">k</span> tasks in a five-instruction chain, where <span class="math">k</span> = 1, …, 5. Avg. Len. is the average number of consecutively completed tasks from the beginning of each chain.
           </p>
@@ -273,8 +269,7 @@
     <section class="content-section" id="ablations">
       <div class="page-shell">
         <div class="section-heading centered">
-          <p class="section-label">Ablation and Analysis</p>
-          <h2>Components, update frequencies, and task-set size</h2>
+          <h2>Ablations</h2>
           <p>The analyses follow the same CALVIN five-instruction-chain evaluation protocol as the main comparison.</p>
         </div>
 
@@ -386,8 +381,7 @@
     <section class="content-section section-tint" id="real-world">
       <div class="page-shell page-shell-wide">
         <div class="section-heading">
-          <p class="section-label">Real-World Experiments</p>
-          <h2>Online adaptation for prerequisite-dependent manipulation</h2>
+          <h2>Real World</h2>
           <p>
             We conduct multi-stage language-conditioned manipulation experiments using a 6-DoF Synria Alicia-D robot arm, a single-DoF gripper, an Intel RealSense D435i third-person camera, and a wrist-mounted D405. Both tasks require the robot to satisfy a prerequisite before interacting with the target object. We collect 60 demonstrations per task, resulting in 120 episodes before online RL post-training.
           </p>
@@ -434,8 +428,7 @@
     <section class="content-section citation-section" id="citation">
       <div class="page-shell prose-shell">
         <div class="section-heading centered">
-          <p class="section-label">Citation</p>
-          <h2>Paper resources</h2>
+          <h2>Citation</h2>
           <p>The manuscript and anonymous code repository are available through the links below.</p>
         </div>
         <div class="citation-actions">

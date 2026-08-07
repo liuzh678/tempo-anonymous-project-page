@@ -120,10 +120,10 @@ button:focus-visible,
 }
 
 .nav-links a {
-  padding: 7px 11px;
+  padding: 8px 13px;
   border-radius: 999px;
   color: #607068;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.01em;
   transition: color 150ms ease, background 150ms ease, box-shadow 150ms ease;
@@ -979,8 +979,8 @@ tbody tr.ours-row:nth-child(even) {
     min-height: 44px;
     display: inline-flex;
     align-items: center;
-    padding: 0 9px;
-    font-size: 12px;
+    padding: 0 10px;
+    font-size: 13px;
   }
 
   .hero-inner {
