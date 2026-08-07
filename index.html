@@ -26,7 +26,6 @@
         <a href="#results">Results</a>
         <a href="#ablations">Ablations</a>
         <a href="#real-world">Real World</a>
-        <a href="#conclusion">Conclusion</a>
         <a href="#citation">Citation</a>
       </div>
     </div>
@@ -427,19 +426,6 @@
         </article>
 
         <p class="real-world-note">When the drawer is already fully open, FLOWER-RL and TEMPO achieve comparable performance. Their performance gap mainly emerges when the limited drawer opening leaves insufficient space for direct target-object manipulation.</p>
-      </div>
-    </section>
-
-    <section class="content-section" id="conclusion">
-      <div class="page-shell prose-shell">
-        <div class="section-heading centered">
-          <p class="section-label">Conclusion</p>
-          <h2>Module-specific adaptation for VLA post-training</h2>
-        </div>
-        <div class="conclusion-copy">
-          <p>TEMPO is a semantic-action decoupled RL post-training framework that optimizes different VLA components through dedicated RL loops. It adapts the semantic projection layer while keeping the pretrained vision-language backbone frozen and optimizes the action expert using online feedback. A module-specific update-frequency strategy updates the semantic projection layer less frequently to mitigate drift in the latent action space and the action expert more frequently to incorporate control feedback efficiently.</p>
-          <p>Evaluated on CALVIN and two real-world manipulation tasks, TEMPO achieves improved long-horizon performance over both state-of-the-art VLA models and the RL post-training baseline in simulation, as well as higher rewards in physical experiments. Future work will explore a language-conditioned dense reward function that provides richer intermediate feedback than the sparse instruction-completion reward.</p>
-        </div>
       </div>
     </section>
 
