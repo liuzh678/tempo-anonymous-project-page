@@ -134,9 +134,6 @@
             <img src="assets/framework_overview.png" width="6015" height="3103" loading="lazy" decoding="async" alt="TEMPO framework with a frozen VLM, semantic projection loop, action-expert loop, replay buffers, critics, and environment interaction.">
           </a>
           <span class="mobile-scroll-hint" aria-hidden="true">Swipe to view the full figure →</span>
-          <figcaption>
-            Framework of TEMPO. The frozen VLM encodes the instruction and observation into <span class="math">h<sub>t</sub></span>, which is transformed by the semantic projection layer into the latent action <span class="math">z<sub>t</sub></span> and subsequently mapped by the action expert to the robot action chunk <span class="math">a<sub>t</sub></span>. Two separate module-level TD3 loops, each equipped with a dedicated replay buffer and critic, optimize the two modules using shared environment rollouts, with a lower update frequency for the semantic projection layer and a higher one for the action expert.
-          </figcaption>
         </figure>
 
         <div class="method-points">
