@@ -540,7 +540,7 @@ figcaption {
   background: var(--green);
 }
 
-.method-points span {
+.method-points .method-index {
   display: inline-grid;
   width: 34px;
   height: 30px;

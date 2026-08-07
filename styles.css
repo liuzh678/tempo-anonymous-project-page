@@ -381,7 +381,7 @@ figcaption {
   border-left: 1px solid var(--line);
 }
 
-.method-points span {
+.method-points .method-index {
   color: var(--blue);
   font-size: 13px;
   font-weight: 800;
