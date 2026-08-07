@@ -14,8 +14,10 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="design.css">
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
   <nav class="site-nav" aria-label="Primary navigation">
     <div class="page-shell nav-inner">
       <a class="wordmark" href="#top">TEMPO</a>
@@ -52,7 +54,7 @@
     </div>
   </header>
 
-  <main>
+  <main id="main-content">
     <section class="overview-section" aria-label="Method overview">
       <div class="page-shell page-shell-wide">
         <figure class="overview-figure scrollable-figure">
@@ -165,6 +167,7 @@
           </p>
         </div>
 
+        <span class="mobile-scroll-hint table-scroll-hint" aria-hidden="true">Swipe to view all columns →</span>
         <h3 class="table-title">CALVIN ABC→D experimental results.</h3>
         <div class="table-wrap compact-table" role="region" aria-label="CALVIN benchmark results" tabindex="0">
           <table>
@@ -260,7 +263,6 @@
             </tbody>
           </table>
         </div>
-        <span class="mobile-scroll-hint" aria-hidden="true">Swipe to view all columns →</span>
 
         <div class="result-summary">
           <p>TEMPO achieves the best overall long-horizon performance on CALVIN ABC→D, ranking first in SR5 and Avg. Len. with 81.7% and 4.59, respectively.</p>
@@ -278,6 +280,7 @@
 
         <div class="ablation-stack">
           <article class="analysis-card">
+            <span class="mobile-scroll-hint table-scroll-hint" aria-hidden="true">Swipe to view all columns →</span>
             <h3 class="table-title">Component ablation.</h3>
             <div class="table-wrap compact-table" role="region" aria-label="Component ablation results" tabindex="0">
               <table>
@@ -304,11 +307,11 @@
                 </tbody>
               </table>
             </div>
-            <span class="mobile-scroll-hint" aria-hidden="true">Swipe to view all columns →</span>
             <p class="table-note">The w/o projection update variant keeps the semantic projection layer fixed and updates only the action expert, whereas the w/o expert update variant keeps the action expert fixed and updates only the semantic projection layer. Neither variant matches full TEMPO in SR5 or Avg. Len. Full TEMPO achieves the highest SR5 and Avg. Len., indicating that the semantic projection layer and action expert provide complementary adaptation capabilities.</p>
           </article>
 
           <article class="analysis-card">
+            <span class="mobile-scroll-hint table-scroll-hint" aria-hidden="true">Swipe to view all columns →</span>
             <h3 class="table-title">Action-to-semantic update-frequency ratios.</h3>
             <div class="table-wrap compact-table" role="region" aria-label="Action-to-semantic update-frequency ratios" tabindex="0">
               <table>
@@ -335,11 +338,11 @@
                 </tbody>
               </table>
             </div>
-            <span class="mobile-scroll-hint" aria-hidden="true">Swipe to view all columns →</span>
             <p class="table-note">The 5:1 and 10:1 settings outperform the equal-frequency 1:1 setting. Performance therefore depends not only on applying RL updates, but also on the relative update frequencies assigned to the two modules.</p>
           </article>
 
           <article class="analysis-card">
+            <span class="mobile-scroll-hint table-scroll-hint" aria-hidden="true">Swipe to view all columns →</span>
             <h3 class="table-title">RL post-training task-set size comparison.</h3>
             <div class="table-wrap compact-table" role="region" aria-label="RL post-training task-set size comparison" tabindex="0">
               <table>
@@ -374,7 +377,6 @@
                 </tbody>
               </table>
             </div>
-            <span class="mobile-scroll-hint" aria-hidden="true">Swipe to view all columns →</span>
             <p class="table-note">Under the fixed 10:1 update-frequency ratio, the task-set size denotes the number of selected subtasks among CALVIN’s 34 subtasks, rather than the instruction-chain length. Performance does not improve monotonically as the task set expands.</p>
           </article>
         </div>
@@ -447,7 +449,7 @@
           </a>
         </div>
         <div class="bibtex-block">
-          <button class="copy-button" type="button" data-copy="bibtex">Copy BibTeX</button>
+          <button class="copy-button" type="button" data-copy="bibtex" aria-live="polite">Copy BibTeX</button>
           <pre id="bibtex">@misc{anonymous2026tempo,
   title  = {TEMPO: Semantic-Action Decoupled RL Post-Training for Vision-Language-Action Models},
   author = {Anonymous Authors},
