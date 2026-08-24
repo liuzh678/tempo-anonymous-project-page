@@ -55,21 +55,7 @@
   </header>
 
   <main id="main-content">
-    <section class="overview-section" aria-label="Method overview">
-      <div class="page-shell page-shell-wide">
-        <figure class="overview-figure scrollable-figure">
-          <a href="assets/overview.png" target="_blank" rel="noopener">
-            <img src="assets/overview.png" width="2830" height="950" fetchpriority="high" decoding="async" alt="TEMPO overview with a frozen vision-language model, a less frequently updated semantic projection layer, and a more frequently updated action expert.">
-          </a>
-          <span class="mobile-scroll-hint" aria-hidden="true">Swipe to view the full figure →</span>
-          <figcaption>
-            Method overview. TEMPO keeps the VLM frozen and decouples the reinforcement learning update frequencies of the semantic projection layer and action expert, updating the former less frequently and the latter more frequently.
-          </figcaption>
-        </figure>
-      </div>
-    </section>
-
-    <section class="content-section video-section" id="video">
+    <section class="content-section video-section video-section-first" id="video">
       <div class="page-shell">
         <div class="section-heading centered">
           <h2>Video</h2>
@@ -81,6 +67,20 @@
             Your browser does not support embedded video.
           </video>
         </div>
+      </div>
+    </section>
+
+    <section class="overview-section" aria-label="Method overview">
+      <div class="page-shell page-shell-wide">
+        <figure class="overview-figure scrollable-figure">
+          <a href="assets/overview.png" target="_blank" rel="noopener">
+            <img src="assets/overview.png" width="2830" height="950" fetchpriority="high" decoding="async" alt="TEMPO overview with a frozen vision-language model, a less frequently updated semantic projection layer, and a more frequently updated action expert.">
+          </a>
+          <span class="mobile-scroll-hint" aria-hidden="true">Swipe to view the full figure →</span>
+          <figcaption>
+            Method overview. TEMPO keeps the VLM frozen and decouples the reinforcement learning update frequencies of the semantic projection layer and action expert, updating the former less frequently and the latter more frequently.
+          </figcaption>
+        </figure>
       </div>
     </section>
 

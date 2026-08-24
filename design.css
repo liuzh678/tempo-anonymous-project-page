@@ -342,6 +342,11 @@ figcaption {
     #ffffff;
 }
 
+.video-section-first {
+  padding-top: clamp(42px, 5vw, 62px);
+  padding-bottom: clamp(96px, 9vw, 128px);
+}
+
 .video-frame {
   width: min(980px, 100%);
   margin-top: 38px;
